@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>DevSchool - Özel Mesajlaşma & AI Asistan</title>
   
   <!-- FontAwesome & Prism CSS -->
@@ -44,9 +44,9 @@
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: var(--bg-primary); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; transition: all 0.3s ease; }
+    body { background-color: var(--bg-primary); color: var(--text-main); display: flex; height: 100vh; height: 100dvh; overflow: hidden; transition: all 0.3s ease; }
 
-    /* Login Screen */
+    /* Login Screen - Default (Masaüstü) */
     .auth-overlay {
       position: fixed;
       inset: 0;
@@ -55,6 +55,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 1rem;
     }
 
     .auth-card {
@@ -74,7 +75,7 @@
 
     .form-group { display: flex; align-items: center; margin-bottom: 1rem; }
     .form-group label { width: 110px; text-align: right; padding-right: 12px; font-size: 0.85rem; font-weight: 600; }
-    .form-group input { flex: 1; padding: 0.6rem 0.8rem; background: #ffffff; border: none; border-radius: 4px; color: #333333; font-size: 0.9rem; outline: none; }
+    .form-group input { flex: 1; padding: 0.65rem 0.8rem; background: #ffffff; border: none; border-radius: 4px; color: #333333; font-size: 0.95rem; outline: none; }
 
     .options-row { display: flex; align-items: center; justify-content: space-between; margin: 1rem 0 1.5rem 110px; font-size: 0.8rem; }
     .remember-me { display: flex; align-items: center; gap: 5px; cursor: pointer; }
@@ -117,9 +118,9 @@
     .chat-input-area input { flex: 1; padding: 0.75rem; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; outline: none; }
     .btn-send { padding: 0.75rem 1.5rem; background: #0072ff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
 
-    .no-chat-selected { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); gap: 1rem; }
+    .no-chat-selected { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); gap: 1rem; text-align: center; padding: 1rem; }
 
-    /* Yuvarlak Robot / AI Butonu ve Paneli */
+    /* Robot / AI Yuvarlak Buton */
     .ai-fab-btn {
       position: absolute;
       bottom: 85px;
@@ -139,7 +140,6 @@
       transition: transform 0.2s, box-shadow 0.2s;
       z-index: 100;
     }
-    .ai-fab-btn:hover { transform: scale(1.08); box-shadow: 0 8px 22px rgba(99, 102, 241, 0.6); }
 
     .ai-chat-card {
       position: absolute;
@@ -157,45 +157,63 @@
       overflow: hidden;
     }
 
-    .ai-card-header {
-      padding: 0.85rem 1rem;
-      background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-weight: 600;
-    }
-
-    .ai-messages {
-      flex: 1;
-      padding: 0.8rem;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      font-size: 0.85rem;
-    }
-
+    .ai-card-header { padding: 0.85rem 1rem; background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%); color: white; display: flex; align-items: center; justify-content: space-between; font-weight: 600; }
+    .ai-messages { flex: 1; padding: 0.8rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.85rem; }
     .ai-msg { padding: 0.6rem 0.8rem; border-radius: 8px; max-width: 85%; word-break: break-word; }
     .ai-msg.user { align-self: flex-end; background: #6366f1; color: white; }
     .ai-msg.bot { align-self: flex-start; background: var(--bg-tertiary); color: var(--text-main); border: 1px solid var(--border-color); }
-
     .ai-input-box { display: flex; padding: 0.6rem; border-top: 1px solid var(--border-color); background: var(--bg-primary); gap: 0.4rem; }
     .ai-input-box input { flex: 1; padding: 0.5rem; background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 4px; outline: none; font-size: 0.85rem; }
     .ai-input-box button { padding: 0.5rem 0.8rem; background: #6366f1; color: white; border: none; border-radius: 4px; cursor: pointer; }
 
     /* Modal Styling */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 1rem; }
     .modal-card { background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 8px; width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 1rem; }
-    .modal-card h3 { font-size: 1.1rem; }
     .modal-card input { padding: 0.65rem; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; outline: none; }
     .modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
     .btn-modal { padding: 0.5rem 1rem; border-radius: 4px; border: none; cursor: pointer; font-weight: 600; }
     
+    .mobile-back-btn { display: none; background: transparent; border: none; color: var(--text-main); font-size: 1.2rem; cursor: pointer; margin-right: 0.5rem; }
+
     pre { margin-top: 0.5rem!important; border-radius: 6px!important; }
     .hidden { display: none!important; }
     .theme-select { background: var(--bg-primary); color: var(--text-main); border: 1px solid var(--border-color); padding: 0.4rem; border-radius: 4px; }
+
+    /* ========================================================
+       📱 MOBİL ARAYÜZ UYARLAMASI (Responsive Media Queries)
+       ======================================================== */
+    @media (max-width: 768px) {
+      .auth-card { padding: 1.8rem 1.2rem; }
+      .form-group { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+      .form-group label { width: 100%; text-align: left; padding-right: 0; }
+      .options-row { margin-left: 0; width: 100%; }
+
+      .sidebar { width: 100%; height: 100%; }
+      .main-chat { display: none; width: 100%; height: 100%; }
+      
+      /* Mobilde Sohbet Açıldığında Sadece Sohbeti Göster */
+      body.chat-open .sidebar { display: none; }
+      body.chat-open .main-chat { display: flex; }
+      body.chat-open .mobile-back-btn { display: inline-block; }
+
+      .message { max-width: 88%; }
+
+      /* AI Kartı Mobilde Tam Ekran Genişliği */
+      .ai-chat-card {
+        right: 10px;
+        left: 10px;
+        width: auto;
+        bottom: 80px;
+        height: 70vh;
+      }
+
+      .ai-fab-btn {
+        bottom: 20px;
+        right: 20px;
+        width: 52px;
+        height: 52px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -244,7 +262,7 @@
     </div>
   </div>
 
-  <!-- Ana Uygulama Paneli -->
+  <!-- Sidebar -->
   <div class="sidebar">
     <div class="sidebar-header">
       <div class="user-profile">
@@ -273,11 +291,13 @@
     </div>
   </div>
 
+  <!-- Ana Chat -->
   <div class="main-chat">
     <div class="chat-header">
-      <div style="display: flex; align-items: center; gap: 0.5rem;">
-        <i class="fa-solid fa-user" id="chatHeaderIcon"></i>
-        <span style="font-weight: 600;" id="chatHeaderTitle">Lütfen Sohbet Etmek İçin Bir Arkadaş Seçin</span>
+      <div style="display: flex; align-items: center;">
+        <button class="mobile-back-btn" onclick="closeMobileChat()"><i class="fa-solid fa-arrow-left"></i></button>
+        <i class="fa-solid fa-user" id="chatHeaderIcon" style="margin-right: 0.5rem;"></i>
+        <span style="font-weight: 600;" id="chatHeaderTitle">Sohbet Seçin</span>
       </div>
       <button onclick="logout()" style="background: transparent; color: var(--text-muted); border: none; cursor: pointer;">
         <i class="fa-solid fa-right-from-bracket"></i> Çıkış
@@ -285,23 +305,23 @@
     </div>
 
     <div id="noChatScreen" class="no-chat-selected">
-      <i class="fa-regular fa-comments" style="font-size: 4rem; opacity: 0.5;"></i>
-      <p>Mesajlaşmak veya kod paylaşmak için sol menüden bir arkadaşınızı seçin.</p>
+      <i class="fa-regular fa-comments" style="font-size: 3.5rem; opacity: 0.5;"></i>
+      <p>Mesajlaşmak veya kod paylaşmak için bir arkadaşınızı seçin.</p>
     </div>
 
     <div class="messages-container hidden" id="messagesContainer"></div>
 
     <div class="chat-input-area hidden" id="chatInputArea">
       <input type="text" id="messageInput" placeholder="Mesaj yazın veya kod yapıştırın..." onkeypress="handleKeyPress(event)">
-      <button class="btn-send" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i> GÖNDER</button>
+      <button class="btn-send" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
 
-    <!-- Robot / AI Yuvarlak Buton -->
+    <!-- AI Robot Butonu -->
     <div class="ai-fab-btn" onclick="toggleAiCard()" title="Yapay Zekaya Soru Sor">
       🤖
     </div>
 
-    <!-- Yapay Zeka Sohbet Kartı -->
+    <!-- AI Sohbet Kartı -->
     <div class="ai-chat-card hidden" id="aiChatCard">
       <div class="ai-card-header">
         <span>🤖 AI Kod & Ders Asistanı</span>
@@ -487,13 +507,19 @@
 
     function selectFriendChat(friendName) {
       activeFriend = friendName;
-      document.getElementById("chatHeaderTitle").innerText = `${friendName} ile Özel Sohbet`;
+      document.getElementById("chatHeaderTitle").innerText = `${friendName}`;
       document.getElementById("noChatScreen").classList.add("hidden");
       document.getElementById("messagesContainer").classList.remove("hidden");
       document.getElementById("chatInputArea").classList.remove("hidden");
 
+      document.body.classList.add("chat-open"); // Mobil görünümde sohbet ekranına geç
+
       loadFriendsList();
       listenForPrivateMessages();
+    }
+
+    function closeMobileChat() {
+      document.body.classList.remove("chat-open"); // Mobilde arkadaş listesine geri dön
     }
 
     function sendMessage() {
@@ -550,7 +576,7 @@
         });
     }
 
-    /* Ücretsiz ve Doğrulamasız Yapay Zeka Servisi (Pollinations API) */
+    /* AI İşlevleri */
     function toggleAiCard() {
       document.getElementById("aiChatCard").classList.toggle("hidden");
     }
@@ -562,7 +588,6 @@
 
       const container = document.getElementById("aiMessages");
 
-      // Kullanıcı Mesajı
       const userMsg = document.createElement("div");
       userMsg.className = "ai-msg user";
       userMsg.innerText = prompt;
@@ -570,7 +595,6 @@
 
       input.value = "";
 
-      // Yükleniyor Mesajı
       const botMsg = document.createElement("div");
       botMsg.className = "ai-msg bot";
       botMsg.innerText = "Düşünüyor... 🤖";
