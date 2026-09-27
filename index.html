@@ -1,764 +1,259 @@
 <!DOCTYPE html>
-<html lang="tr" class="dark">
+<html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevSchool - Kod & Mesajlaşma Platformu</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevSchool - Kod & Mesajlaşma Platformu</title>
+  
+  <!-- FontAwesome & Prism CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  
+  <!-- Firebase JS SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+  <style>
+    :root {
+      --bg-primary: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-tertiary: #21262d;
+      --text-main: #c9d1d9;
+      --text-muted: #8b949e;
+      --accent-color: #58a6ff;
+      --accent-hover: #1f6feb;
+      --border-color: #30363d;
+      --code-bg: #0d1117;
+      --card-bg: #161b22;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f6f8fa;
+      --bg-tertiary: #eaeea1;
+      --text-main: #24292f;
+      --text-muted: #57606a;
+      --accent-color: #0969da;
+      --accent-hover: #0c2d6b;
+      --border-color: #d0d7de;
+      --code-bg: #24292e;
+      --card-bg: #ffffff;
+    }
+
+    [data-theme="cyberpunk"] {
+      --bg-primary: #050505;
+      --bg-secondary: #120024;
+      --bg-tertiary: #2a004f;
+      --text-main: #00ffcc;
+      --text-muted: #ff007f;
+      --accent-color: #ff007f;
+      --accent-hover: #b30059;
+      --border-color: #00ffcc;
+      --code-bg: #050505;
+      --card-bg: #120024;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: var(--bg-primary); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; transition: all 0.3s ease; }
+
+    /* Auth Screen */
+    .auth-overlay { position: fixed; inset: 0; background: var(--bg-primary); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+    .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 2.5rem; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); text-align: center; }
+    .auth-card h2 { margin-bottom: 1.5rem; color: var(--accent-color); font-size: 1.8rem; }
+    .input-group { margin-bottom: 1rem; text-align: left; }
+    .input-group label { display: block; margin-bottom: 0.4rem; font-size: 0.85rem; color: var(--text-muted); }
+    .input-group input { width: 100%; padding: 0.75rem; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; outline: none; }
+    .btn { width: 100%; padding: 0.75rem; background: var(--accent-color); color: #fff; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 0.5rem; }
+    .btn:hover { background: var(--accent-hover); }
+
+    /* Main App Layout */
+    .sidebar { width: 300px; background: var(--bg-secondary); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; }
+    .sidebar-header { padding: 1rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+    .user-profile { display: flex; align-items: center; gap: 0.75rem; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent-color); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; }
+    .chat-list { flex: 1; overflow-y: auto; padding: 0.5rem; }
+    .chat-item { padding: 0.75rem; border-radius: 6px; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; transition: background 0.2s; margin-bottom: 0.2rem; }
+    .chat-item:hover, .chat-item.active { background: var(--bg-tertiary); }
+
+    .main-chat { flex: 1; display: flex; flex-direction: column; background: var(--bg-primary); }
+    .chat-header { padding: 1rem; border-bottom: 1px solid var(--border-color); background: var(--bg-secondary); display: flex; align-items: center; justify-content: space-between; }
+    .messages-container { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 1rem; }
     
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        cyber: {
-                            bg: '#0a0a12',
-                            card: '#121225',
-                            accent: '#00ffcc',
-                            purple: '#9d4edd',
-                            text: '#e2e8f0'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['Fira Code', 'monospace']
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(156, 163, 175, 0.3);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(156, 163, 175, 0.5);
-        }
+    .message { display: flex; flex-direction: column; max-width: 70%; }
+    .message.sent { align-self: flex-end; }
+    .message.received { align-self: flex-start; }
+    .message-header { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.2rem; display: flex; gap: 0.5rem; }
+    .message-bubble { padding: 0.75rem 1rem; border-radius: 8px; background: var(--bg-tertiary); border: 1px solid var(--border-color); word-break: break-word; }
+    .message.sent .message-bubble { background: var(--accent-color); color: #fff; border: none; }
+    
+    .chat-input-area { padding: 1rem; background: var(--bg-secondary); border-top: 1px solid var(--border-color); display: flex; gap: 0.5rem; align-items: center; }
+    .chat-input-area input { flex: 1; padding: 0.75rem; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; outline: none; }
 
-        /* Cyberpunk Theme Specifics */
-        .theme-cyberpunk {
-            --bg-main: #090a0f;
-            --bg-card: #121526;
-            --accent: #00f0ff;
-            --border-color: #7000ff;
-        }
-        .theme-cyberpunk .cyber-border {
-            border-color: #7000ff;
-            box-shadow: 0 0 10px rgba(112, 0, 255, 0.2);
-        }
-        .theme-cyberpunk .cyber-glow {
-            text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
-        }
-
-        /* Glassmorphism */
-        .glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-        .glass-light {
-            background: rgba(0, 0, 0, 0.03);
-            backdrop-filter: blur(10px);
-        }
-    </style>
+    pre { margin-top: 0.5rem!important; border-radius: 6px!important; }
+    .hidden { display: none!important; }
+    .theme-select { background: var(--bg-primary); color: var(--text-main); border: 1px solid var(--border-color); padding: 0.4rem; border-radius: 4px; }
+  </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans h-screen flex flex-col transition-colors duration-300 overflow-hidden" id="app-body">
+<body>
 
-    <div id="app" class="h-full flex flex-col w-full max-w-7xl mx-auto shadow-2xl relative">
+  <!-- Auth Overlay -->
+  <div id="authScreen" class="auth-overlay">
+    <div class="auth-card">
+      <h2><i class="fa-solid fa-code"></i> DevSchool</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Giriş Yap veya Hesap Oluştur</p>
+      <div class="input-group">
+        <label>Kullanıcı Adı</label>
+        <input type="text" id="usernameInput" placeholder="Örn: Yigit">
+      </div>
+      <button class="btn" onclick="login()">Sisteme Giriş Yap</button>
+    </div>
+  </div>
 
-        <header class="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 z-20 transition-colors">
-            <!-- Logo & Title -->
-            <div class="flex items-center space-x-3">
-                <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 text-white p-2.5 rounded-xl shadow-lg flex items-center justify-center">
-                    <i class="fa-solid fa-code text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-lg leading-tight tracking-wide flex items-center gap-2">
-                        DevSchool <span class="text-xs font-normal px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-700">v1.0</span>
-                    </h1>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Okul İçi Kod & Sohbet Ağı</p>
-                </div>
-            </div>
-
-            <!-- Header Controls & User Info -->
-            <div id="header-right" class="flex items-center space-x-3">
-                <!-- Theme Selector Dropdown -->
-                <div class="relative inline-block text-left">
-                    <button id="theme-btn" onclick="toggleThemeMenu()" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition flex items-center gap-2 text-sm">
-                        <i class="fa-solid fa-palette text-indigo-500"></i>
-                        <span class="hidden sm:inline">Tema</span>
-                    </button>
-                    <!-- Theme Menu Dropdown -->
-                    <div id="theme-menu" class="hidden absolute right-0 mt-2 w-48 rounded-xl shadow-xl bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-50 p-2 space-y-1 border border-gray-100 dark:border-gray-700">
-                        <button onclick="setTheme('dark')" class="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2">
-                            <i class="fa-solid fa-moon text-indigo-400"></i> Karanlık (Dark)
-                        </button>
-                        <button onclick="setTheme('light')" class="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2">
-                            <i class="fa-solid fa-sun text-amber-500"></i> Aydınlık (Light)
-                        </button>
-                        <button onclick="setTheme('cyberpunk')" class="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2">
-                            <i class="fa-solid fa-bolt text-teal-400"></i> Siberpunk (Cyber)
-                        </button>
-                    </div>
-                </div>
-
-                <!-- User Profile Quick Badge -->
-                <div id="user-badge" class="hidden items-center gap-3 pl-2 border-l border-gray-200 dark:border-gray-700">
-                    <button onclick="openProfileModal()" class="flex items-center gap-2 hover:opacity-80 transition">
-                        <img id="header-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Student" class="w-9 h-9 rounded-full bg-indigo-100 dark:bg-indigo-950 border border-indigo-300 dark:border-indigo-700" alt="Avatar">
-                        <div class="hidden md:block text-left">
-                            <div id="header-username" class="font-semibold text-sm leading-none">Öğrenci</div>
-                            <span class="text-[10px] text-green-500 font-medium">● Çevrimiçi</span>
-                        </div>
-                    </button>
-                    <button onclick="logout()" title="Çıkış Yap" class="p-2 text-gray-400 hover:text-red-500 transition">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <div id="auth-screen" class="absolute inset-0 bg-gray-900/90 backdrop-blur-md z-40 flex items-center justify-center p-4">
-            <div class="bg-white dark:bg-gray-800 w-full max-w-md rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-                <div class="p-6 text-center border-b border-gray-100 dark:border-gray-700">
-                    <div class="w-16 h-16 bg-indigo-600 rounded-2xl text-white flex items-center justify-center text-3xl mx-auto mb-3 shadow-lg shadow-indigo-500/30">
-                        <i class="fa-solid fa-laptop-code"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold">DevSchool'a Hoş Geldin</h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Okul arkadaşlarınla kod paylaş ve sohbet et!</p>
-                </div>
-
-                <div class="p-6">
-                    <!-- Auth Tabs -->
-                    <div class="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-xl mb-6 text-sm font-medium">
-                        <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg bg-white dark:bg-gray-800 shadow text-indigo-600 dark:text-indigo-400 transition">Giriş Yap</button>
-                        <button id="tab-register" onclick="switchAuthTab('register')" class="flex-1 py-2 rounded-lg text-gray-500 dark:text-gray-400 transition">Kayıt Ol</button>
-                    </div>
-
-                    <!-- Auth Form -->
-                    <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">Kullanıcı Adı</label>
-                            <div class="relative">
-                                <i class="fa-solid fa-user absolute left-3 top-3 text-gray-400"></i>
-                                <input type="text" id="auth-username" required placeholder="ör. ahmet_kod" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">Şifre</label>
-                            <div class="relative">
-                                <i class="fa-solid fa-lock absolute left-3 top-3 text-gray-400"></i>
-                                <input type="password" id="auth-password" required placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-                            </div>
-                        </div>
-
-                        <div id="school-class-field" class="hidden">
-                            <label class="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">Sınıf / Bölüm</label>
-                            <div class="relative">
-                                <i class="fa-solid fa-graduation-cap absolute left-3 top-3 text-gray-400"></i>
-                                <input type="text" id="auth-class" placeholder="ör. 10-A Bilişim" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-                            </div>
-                        </div>
-
-                        <button type="submit" id="auth-submit-btn" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-3 rounded-xl shadow-lg transition duration-200 mt-2">
-                            Giriş Yap
-                        </button>
-                    </form>
-
-                    <!-- Fast Demo Login -->
-                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 text-center">
-                        <button onclick="demoLogin()" class="text-xs text-indigo-500 hover:underline font-medium">
-                            ⚡ Demo Hesap İle Hızlıca Dene
-                        </button>
-                    </div>
-                </div>
-            </div>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="user-profile">
+        <div class="avatar" id="myAvatar">?</div>
+        <div>
+          <div style="font-weight: 600;" id="myUsername">Kullanıcı</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">Çevrimiçi</div>
         </div>
-
-        <div class="flex-1 flex overflow-hidden relative">
-
-            <aside id="sidebar" class="w-full md:w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col z-10 transition-all duration-300 absolute md:relative inset-0 md:inset-auto -translate-x-full md:translate-x-0">
-                
-                <!-- Sidebar Top Actions & Search -->
-                <div class="p-4 border-b border-gray-200 dark:border-gray-700 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Sohbetler & Arkadaşlar</span>
-                        <button onclick="openAddFriendModal()" class="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 text-xs font-medium hover:bg-indigo-100 transition flex items-center gap-1">
-                            <i class="fa-solid fa-user-plus"></i> Arkadaş Ekle
-                        </button>
-                    </div>
-                    
-                    <!-- Search Input -->
-                    <div class="relative">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
-                        <input type="text" id="search-friends" onkeyup="filterFriends()" placeholder="Arkadaş veya kanal ara..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl bg-gray-100 dark:bg-gray-700 border-none outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-                </div>
-
-                <!-- Channels / Groups List -->
-                <div class="px-3 py-2">
-                    <div class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-2 mb-1">Genel Odalar</div>
-                    <div id="public-channels" class="space-y-1">
-                        <button onclick="switchChat('global')" id="chat-tab-global" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 font-medium text-sm">
-                            <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-bold">#</div>
-                            <div class="flex-1 truncate">
-                                <div># okul-genel-kod</div>
-                                <div class="text-[10px] text-gray-400">Tüm okul burada</div>
-                            </div>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Direct Messages / Friends List -->
-                <div class="flex-1 overflow-y-auto px-3 py-2">
-                    <div class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-2 mb-1 flex justify-between">
-                        <span>Özel Mesajlar</span>
-                        <span id="friends-count" class="text-xs text-indigo-500">0</span>
-                    </div>
-                    <div id="friends-list" class="space-y-1">
-                        <!-- Dynamic Friends Inserted via JS -->
-                    </div>
-                </div>
-
-                <!-- Mobile Close Sidebar Button -->
-                <button onclick="toggleMobileSidebar()" class="md:hidden p-3 bg-red-500 text-white text-center font-bold">
-                    Kapat
-                </button>
-            </aside>
-
-            <main class="flex-1 bg-gray-50 dark:bg-gray-900 flex flex-col h-full overflow-hidden">
-                
-                <!-- Chat Header -->
-                <div class="h-14 px-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between shadow-sm">
-                    <div class="flex items-center gap-3">
-                        <button onclick="toggleMobileSidebar()" class="md:hidden p-2 text-gray-500 hover:text-indigo-600">
-                            <i class="fa-solid fa-bars text-lg"></i>
-                        </button>
-                        <div id="current-chat-avatar" class="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
-                            #
-                        </div>
-                        <div>
-                            <h2 id="current-chat-name" class="font-bold text-sm flex items-center gap-2">
-                                # okul-genel-kod
-                            </h2>
-                            <p id="current-chat-status" class="text-[11px] text-gray-400">Genel yazılım ve ödev yardımlaşma kanalı</p>
-                        </div>
-                    </div>
-
-                    <!-- Header Quick Tools -->
-                    <div class="flex items-center gap-2">
-                        <button onclick="openCodeSnippetModal()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-semibold shadow hover:opacity-90 transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-code"></i> Kod Gönder
-                        </button>
-                    </div>
-                </div>
-
-                <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4">
-                    <!-- Dynamic Messages will load here -->
-                </div>
-
-                <div class="p-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-                    
-                    <!-- Pre-code snippet bar (Optional preview before sending) -->
-                    <div id="code-preview-bar" class="hidden mb-2 p-2 bg-gray-900 text-gray-200 rounded-lg text-xs font-mono flex justify-between items-center">
-                        <span class="flex items-center gap-2"><i class="fa-solid fa-file-code text-indigo-400"></i> Kod Bloğu Eklendi</span>
-                        <button onclick="clearCodePreview()" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-
-                    <form id="message-form" onsubmit="sendMessage(event)" class="flex items-end gap-2">
-                        <div class="flex-1 bg-gray-100 dark:bg-gray-700/60 rounded-2xl p-2 flex items-center border border-transparent focus-within:border-indigo-500 transition">
-                            <button type="button" onclick="openCodeSnippetModal()" title="Kod Bloğu Ekle" class="p-2 text-gray-400 hover:text-indigo-500 transition rounded-lg">
-                                <i class="fa-solid fa-code text-base"></i>
-                            </button>
-                            <textarea id="message-input" rows="1" placeholder="Mesaj yaz veya kod paylaş..." onkeydown="handleKeyPress(event)" class="w-full bg-transparent border-none outline-none resize-none max-h-24 text-sm px-2 py-1"></textarea>
-                        </div>
-
-                        <button type="submit" class="p-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl shadow-lg transition flex items-center justify-center w-11 h-11">
-                            <i class="fa-solid fa-paper-plane"></i>
-                        </button>
-                    </form>
-                </div>
-            </main>
+      </div>
+      <select class="theme-select" onchange="changeTheme(this.value)">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="cyberpunk">Cyberpunk</option>
+      </select>
+    </div>
+    <div class="chat-list">
+      <div class="chat-item active">
+        <i class="fa-solid fa-hashtag" style="color: var(--accent-color);"></i>
+        <div>
+          <div style="font-weight: 600;"># Genel Sohbet</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">Okul Odası</div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Chat -->
+  <div class="main-chat">
+    <div class="chat-header">
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fa-solid fa-hashtag"></i>
+        <span style="font-weight: 600;">Genel Sohbet & Kod Paylaşımı</span>
+      </div>
     </div>
 
-    <div id="code-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 w-full max-w-2xl rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
-                <h3 class="font-bold text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-code text-indigo-500"></i> Kod Bloğu Paylaş
-                </h3>
-                <button onclick="closeCodeSnippetModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <div class="p-4 space-y-3 flex-1 overflow-y-auto">
-                <div class="flex gap-3">
-                    <div class="flex-1">
-                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Yazılım Dili</label>
-                        <select id="code-language" class="w-full p-2 text-xs rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700">
-                            <option value="python">Python</option>
-                            <option value="javascript">JavaScript / HTML</option>
-                            <option value="cpp">C++ / C#</option>
-                            <option value="java">Java</option>
-                            <option value="css">CSS</option>
-                            <option value="sql">SQL</option>
-                        </select>
-                    </div>
-                    <div class="flex-1">
-                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Başlık / Açıklama</label>
-                        <input type="text" id="code-title" placeholder="ör. Ödev Sorusu 3 C++ Çözümü" class="w-full p-2 text-xs rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Kod Yapıştır</label>
-                    <textarea id="code-content" rows="10" placeholder="// Kodlarını buraya yapıştır..." class="w-full p-3 font-mono text-xs rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-900 text-green-400 outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                </div>
-            </div>
-
-            <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2 bg-gray-50 dark:bg-gray-800/50">
-                <button onclick="closeCodeSnippetModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700">İptal</button>
-                <button onclick="submitCodeSnippet()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow">Kodu Sohbette Paylaş</button>
-            </div>
-        </div>
+    <div class="messages-container" id="messagesContainer">
+      <!-- Mesajlar buraya veritabanından yüklenecek -->
     </div>
 
-    <div id="add-friend-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-5">
-            <h3 class="font-bold text-base mb-3 flex items-center gap-2">
-                <i class="fa-solid fa-user-plus text-indigo-500"></i> Arkadaş Ekle
-            </h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Okul arkadaşının kullanıcı adını yazarak arkadaş listene ekleyebilirsin.</p>
-            
-            <input type="text" id="add-friend-username" placeholder="Kullanıcı adı..." class="w-full p-2.5 text-sm rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 mb-4 outline-none focus:ring-2 focus:ring-indigo-500">
-
-            <div class="flex justify-end gap-2">
-                <button onclick="closeAddFriendModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700">Vazgeç</button>
-                <button onclick="handleAddFriend()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow">Ekle</button>
-            </div>
-        </div>
+    <div class="chat-input-area">
+      <input type="text" id="messageInput" placeholder="Mesaj yazın veya kod yapıştırın..." onkeypress="handleKeyPress(event)">
+      <button class="btn" style="width: auto; padding: 0.75rem 1.5rem;" onclick="sendMessage()">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
     </div>
+  </div>
 
-    <div id="profile-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 w-full max-w-md rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6">
-            <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-user-gear text-indigo-500"></i> Profil Ayarları
-            </h3>
-            
-            <div class="space-y-4">
-                <div class="text-center">
-                    <img id="profile-modal-avatar" src="" class="w-20 h-20 rounded-full mx-auto bg-indigo-100 border-2 border-indigo-500 p-1 mb-2">
-                    <button onclick="generateRandomAvatar()" class="text-xs text-indigo-500 hover:underline">🎲 Rastgele Avatar Oluştur</button>
-                </div>
+  <!-- Prism JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Durum Mesajı</label>
-                    <input type="text" id="profile-status-input" placeholder="ör. Python öğreniyor..." class="w-full p-2.5 text-sm rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700">
-                </div>
-            </div>
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCGSljEvthgH6QYasetqpS9xsuNfV_RIzI",
+      authDomain: "devschool-558db.firebaseapp.com",
+      projectId: "devschool-558db",
+      storageBucket: "devschool-558db.firebasestorage.app",
+      messagingSenderId: "99712932913",
+      appId: "1:99712932913:web:b146802b32dd0e26b1c910"
+    };
 
-            <div class="flex justify-end gap-2 mt-6">
-                <button onclick="closeProfileModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700">İptal</button>
-                <button onclick="saveProfile()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow">Kaydet</button>
-            </div>
-        </div>
-    </div>
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-    <script>
-        // Default State
-        let currentUser = null;
-        let currentChatId = 'global';
-        let currentTheme = 'dark';
-        let attachedCode = null;
+    let currentUser = "";
 
-        // Mock Database Storage
-        let friends = [
-            { id: 'f1', name: 'Mert_Python', status: 'C++ Ödevi yapıyor', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Mert', online: true },
-            { id: 'f2', name: 'Zeynep_Dev', status: 'HTML/CSS Tasarım', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Zeynep', online: false },
-            { id: 'f3', name: 'Hoca_Ahmet', status: 'Ders notları yayında', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Ahmet', online: true }
-        ];
+    function login() {
+      const username = document.getElementById("usernameInput").value.trim();
+      if (!username) return alert("Lütfen bir kullanıcı adı girin!");
+      
+      currentUser = username;
+      document.getElementById("myUsername").innerText = currentUser;
+      document.getElementById("myAvatar").innerText = currentUser[0].toUpperCase();
+      document.getElementById("authScreen").classList.add("hidden");
 
-        let messages = {
-            'global': [
-                { id: 1, sender: 'Mert_Python', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Mert', text: 'Selam millet! Bugünkü C++ ödevinin 2. sorusunu çözen var mı?', time: '14:20', isCode: false },
-                { id: 2, sender: 'Zeynep_Dev', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Zeynep', text: 'Evet ben çözdüm, kopyalayabilirsiniz 👇', time: '14:22', isCode: true, codeLang: 'cpp', codeContent: '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "DevSchool Kod Paylaşımı!" << endl;\n    return 0;\n}' }
-            ],
-            'f1': [
-                { id: 101, sender: 'Mert_Python', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Mert', text: 'Kanka koda bakar mısın nerede hata var?', time: '13:00', isCode: false }
-            ]
-        };
+      listenForMessages();
+    }
 
-        // Initialize App
-        window.onload = function() {
-            loadSavedUser();
-            renderFriends();
-            renderMessages();
-            setTheme('dark');
-        };
+    function changeTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+    }
 
-        // --- AUTH SYSTEM ---
-        let authMode = 'login';
+    function handleKeyPress(e) {
+      if (e.key === "Enter") sendMessage();
+    }
 
-        function switchAuthTab(mode) {
-            authMode = mode;
-            const loginBtn = document.getElementById('tab-login');
-            const regBtn = document.getElementById('tab-register');
-            const schoolField = document.getElementById('school-class-field');
-            const submitBtn = document.getElementById('auth-submit-btn');
+    function sendMessage() {
+      const input = document.getElementById("messageInput");
+      const text = input.value.trim();
+      if (!text) return;
 
-            if (mode === 'login') {
-                loginBtn.className = "flex-1 py-2 rounded-lg bg-white dark:bg-gray-800 shadow text-indigo-600 dark:text-indigo-400 transition";
-                regBtn.className = "flex-1 py-2 rounded-lg text-gray-500 dark:text-gray-400 transition";
-                schoolField.classList.add('hidden');
-                submitBtn.innerText = 'Giriş Yap';
+      const isCode = text.includes("function") || text.includes("var") || text.includes("let") || text.includes("const") || text.includes("<") || text.includes("class");
+
+      db.collection("messages").add({
+        user: currentUser,
+        text: text,
+        isCode: isCode,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      input.value = "";
+    }
+
+    function listenForMessages() {
+      db.collection("messages").orderBy("timestamp", "asc")
+        .onSnapshot(snapshot => {
+          const container = document.getElementById("messagesContainer");
+          container.innerHTML = "";
+
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            if (!data.text) return;
+
+            const isMe = data.user === currentUser;
+            const messageDiv = document.createElement("div");
+            messageDiv.className = `message ${isMe ? 'sent' : 'received'}`;
+
+            let contentHTML = "";
+            if (data.isCode) {
+              contentHTML = `<pre><code class="language-javascript">${escapeHTML(data.text)}</code></pre>`;
             } else {
-                regBtn.className = "flex-1 py-2 rounded-lg bg-white dark:bg-gray-800 shadow text-indigo-600 dark:text-indigo-400 transition";
-                loginBtn.className = "flex-1 py-2 rounded-lg text-gray-500 dark:text-gray-400 transition";
-                schoolField.classList.remove('hidden');
-                submitBtn.innerText = 'Kayıt Ol ve Başla';
-            }
-        }
-
-        function handleAuth(e) {
-            e.preventDefault();
-            const username = document.getElementById('auth-username').value;
-            if(!username) return;
-
-            currentUser = {
-                name: username,
-                avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${username}`,
-                status: 'DevSchool Öğrencisi'
-            };
-
-            localStorage.setItem('devschool_user', JSON.stringify(currentUser));
-            updateUserUI();
-            document.getElementById('auth-screen').classList.add('hidden');
-        }
-
-        function demoLogin() {
-            currentUser = {
-                name: 'Kodcu_Öğrenci',
-                avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Student123',
-                status: 'Sınava çalışıyor 📚'
-            };
-            updateUserUI();
-            document.getElementById('auth-screen').classList.add('hidden');
-        }
-
-        function loadSavedUser() {
-            const saved = localStorage.getItem('devschool_user');
-            if (saved) {
-                currentUser = JSON.parse(saved);
-                updateUserUI();
-                document.getElementById('auth-screen').classList.add('hidden');
-            }
-        }
-
-        function updateUserUI() {
-            if(!currentUser) return;
-            document.getElementById('user-badge').classList.remove('hidden');
-            document.getElementById('user-badge').classList.add('flex');
-            document.getElementById('header-username').innerText = currentUser.name;
-            document.getElementById('header-avatar').src = currentUser.avatar;
-        }
-
-        function logout() {
-            localStorage.removeItem('devschool_user');
-            currentUser = null;
-            document.getElementById('user-badge').classList.add('hidden');
-            document.getElementById('user-badge').classList.remove('flex');
-            document.getElementById('auth-screen').classList.remove('hidden');
-        }
-
-        function renderFriends() {
-            const container = document.getElementById('friends-list');
-            document.getElementById('friends-count').innerText = friends.length;
-            container.innerHTML = '';
-
-            friends.forEach(friend => {
-                const isActive = currentChatId === friend.id;
-                const activeClass = isActive ? 'bg-indigo-50 dark:bg-indigo-900/40 border-l-4 border-indigo-500' : '';
-                
-                const html = `
-                    <button onclick="switchChat('${friend.id}')" class="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition ${activeClass}">
-                        <div class="relative">
-                            <img src="${friend.avatar}" class="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700">
-                            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full ${friend.online ? 'bg-green-500' : 'bg-gray-400'} ring-2 ring-white dark:ring-gray-800"></span>
-                        </div>
-                        <div class="flex-1 overflow-hidden">
-                            <div class="font-medium text-xs truncate">${friend.name}</div>
-                            <div class="text-[10px] text-gray-400 truncate">${friend.status}</div>
-                        </div>
-                    </button>
-                `;
-                container.innerHTML += html;
-            });
-        }
-
-        function switchChat(id) {
-            currentChatId = id;
-            renderFriends();
-
-            const globalBtn = document.getElementById('chat-tab-global');
-            const avatarEl = document.getElementById('current-chat-avatar');
-            const nameEl = document.getElementById('current-chat-name');
-            const statusEl = document.getElementById('current-chat-status');
-
-            if(id === 'global') {
-                globalBtn.classList.add('bg-indigo-50', 'dark:bg-indigo-900/30');
-                avatarEl.innerHTML = '#';
-                nameEl.innerText = '# okul-genel-kod';
-                statusEl.innerText = 'Genel yazılım ve ödev yardımlaşma kanalı';
-            } else {
-                globalBtn.classList.remove('bg-indigo-50', 'dark:bg-indigo-900/30');
-                const friend = friends.find(f => f.id === id);
-                if(friend) {
-                    avatarEl.innerHTML = `<img src="${friend.avatar}" class="w-full h-full rounded-full">`;
-                    nameEl.innerText = friend.name;
-                    statusEl.innerText = friend.online ? 'Çevrimiçi' : 'Son görülme yakınlarda';
-                }
+              contentHTML = `<div class="message-bubble">${escapeHTML(data.text)}</div>`;
             }
 
-            renderMessages();
-            
-            // Close mobile sidebar if open
-            document.getElementById('sidebar').classList.add('-translate-x-full');
-        }
+            messageDiv.innerHTML = `
+              <div class="message-header">
+                <span>${data.user}</span>
+              </div>
+              ${contentHTML}
+            `;
 
-        function renderMessages() {
-            const container = document.getElementById('chat-messages');
-            container.innerHTML = '';
+            container.appendChild(messageDiv);
+          });
 
-            const chatMsgs = messages[currentChatId] || [];
+          Prism.highlightAll();
+          container.scrollTop = container.scrollHeight;
+        });
+    }
 
-            chatMsgs.forEach(msg => {
-                const isMe = currentUser && msg.sender === currentUser.name;
-                
-                let codeHtml = '';
-                if(msg.isCode) {
-                    codeHtml = `
-                        <div class="mt-2 rounded-xl bg-gray-900 text-gray-100 overflow-hidden font-mono text-xs border border-gray-700">
-                            <div class="bg-gray-800/80 px-3 py-1.5 flex justify-between items-center text-[11px] text-gray-400 border-b border-gray-700">
-                                <span><i class="fa-solid fa-code text-indigo-400 mr-1"></i> ${msg.codeLang || 'code'}</span>
-                                <button onclick="copyToClipboard(\`${escapeHtml(msg.codeContent)}\`)" class="hover:text-white transition flex items-center gap-1">
-                                    <i class="fa-regular fa-copy"></i> Kopyala
-                                </button>
-                            </div>
-                            <pre class="p-3 overflow-x-auto text-green-400 leading-relaxed"><code>${escapeHtml(msg.codeContent)}</code></pre>
-                        </div>
-                    `;
-                }
-
-                const msgBubble = `
-                    <div class="flex gap-3 ${isMe ? 'flex-row-reverse' : ''}">
-                        <img src="${msg.avatar}" class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-950 flex-shrink-0">
-                        <div class="max-w-[80%] ${isMe ? 'items-end' : 'items-start'} flex flex-col">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="text-xs font-semibold text-gray-600 dark:text-gray-300">${msg.sender}</span>
-                                <span class="text-[10px] text-gray-400">${msg.time}</span>
-                            </div>
-                            <div class="p-3 rounded-2xl text-sm ${isMe ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 rounded-tl-none'}">
-                                <div>${escapeHtml(msg.text)}</div>
-                                ${codeHtml}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += msgBubble;
-            });
-
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function sendMessage(e) {
-            if(e) e.preventDefault();
-            if(!currentUser) {
-                alert('Mesaj göndermek için giriş yapmalısınız.');
-                return;
-            }
-
-            const input = document.getElementById('message-input');
-            const text = input.value.trim();
-
-            if(!text && !attachedCode) return;
-
-            if(!messages[currentChatId]) {
-                messages[currentChatId] = [];
-            }
-
-            const newMsg = {
-                id: Date.now(),
-                sender: currentUser.name,
-                avatar: currentUser.avatar,
-                text: text,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                isCode: !!attachedCode,
-                codeLang: attachedCode ? attachedCode.lang : '',
-                codeContent: attachedCode ? attachedCode.content : ''
-            };
-
-            messages[currentChatId].push(newMsg);
-            input.value = '';
-            clearCodePreview();
-            renderMessages();
-        }
-
-        function handleKeyPress(e) {
-            if(e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        }
-
-        function openCodeSnippetModal() {
-            document.getElementById('code-modal').classList.remove('hidden');
-        }
-
-        function closeCodeSnippetModal() {
-            document.getElementById('code-modal').classList.add('hidden');
-        }
-
-        function submitCodeSnippet() {
-            const lang = document.getElementById('code-language').value;
-            const title = document.getElementById('code-title').value;
-            const content = document.getElementById('code-content').value.trim();
-
-            if(!content) return;
-
-            attachedCode = { lang, content };
-            
-            // Auto submit or attach
-            const msgInput = document.getElementById('message-input');
-            if(title) msgInput.value = title;
-            
-            closeCodeSnippetModal();
-            sendMessage();
-        }
-
-        function clearCodePreview() {
-            attachedCode = null;
-            document.getElementById('code-preview-bar').classList.add('hidden');
-        }
-
-        function toggleThemeMenu() {
-            document.getElementById('theme-menu').classList.toggle('hidden');
-        }
-
-        function setTheme(theme) {
-            currentTheme = theme;
-            const body = document.getElementById('app-body');
-            body.classList.remove('dark', 'theme-cyberpunk');
-
-            if(theme === 'dark') {
-                body.classList.add('dark');
-            } else if(theme === 'cyberpunk') {
-                body.classList.add('dark', 'theme-cyberpunk');
-            }
-            document.getElementById('theme-menu').classList.add('hidden');
-        }
-
-        function copyToClipboard(text) {
-            const tempInput = document.createElement('textarea');
-            tempInput.value = text;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-
-            // Simple Notification
-            const toast = document.createElement('div');
-            toast.className = 'fixed bottom-5 right-5 bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs shadow-xl z-50 animate-bounce';
-            toast.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Kod kopyalandı!';
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
-        }
-
-        function escapeHtml(text) {
-            if(!text) return '';
-            return text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
-        function toggleMobileSidebar() {
-            document.getElementById('sidebar').classList.toggle('-translate-x-full');
-        }
-
-        function openAddFriendModal() {
-            document.getElementById('add-friend-modal').classList.remove('hidden');
-        }
-
-        function closeAddFriendModal() {
-            document.getElementById('add-friend-modal').classList.add('hidden');
-        }
-
-        function handleAddFriend() {
-            const input = document.getElementById('add-friend-username');
-            const name = input.value.trim();
-
-            if(!name) return;
-
-            const newFriend = {
-                id: 'f_' + Date.now(),
-                name: name,
-                status: 'Yeni eklendi',
-                avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${name}`,
-                online: true
-            };
-
-            friends.push(newFriend);
-            input.value = '';
-            closeAddFriendModal();
-            renderFriends();
-        }
-
-        function openProfileModal() {
-            if(!currentUser) return;
-            document.getElementById('profile-modal-avatar').src = currentUser.avatar;
-            document.getElementById('profile-status-input').value = currentUser.status;
-            document.getElementById('profile-modal').classList.remove('hidden');
-        }
-
-        function closeProfileModal() {
-            document.getElementById('profile-modal').classList.add('hidden');
-        }
-
-        function generateRandomAvatar() {
-            const seed = Math.random().toString(36).substring(7);
-            const newAvatar = `https://api.dicebear.com/7.x/bottts/svg?seed=${seed}`;
-            document.getElementById('profile-modal-avatar').src = newAvatar;
-        }
-
-        function saveProfile() {
-            if(!currentUser) return;
-            currentUser.avatar = document.getElementById('profile-modal-avatar').src;
-            currentUser.status = document.getElementById('profile-status-input').value;
-            
-            localStorage.setItem('devschool_user', JSON.stringify(currentUser));
-            updateUserUI();
-            closeProfileModal();
-        }
-    </script>
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+      );
+    }
+  </script>
 </body>
 </html>
