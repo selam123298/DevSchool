@@ -13,9 +13,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
-  <!-- Ücretsiz Gemini AI Desteği (Puter.js) -->
-  <script src="https://js.puter.com/v2/"></script>
-
   <style>
     :root {
       --bg-primary: #0d1117;
@@ -122,7 +119,7 @@
 
     .no-chat-selected { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); gap: 1rem; }
 
-    /* Yuvarlak Robot / Gemini AI Butonu ve Paneli */
+    /* Yuvarlak Robot / AI Butonu ve Paneli */
     .ai-fab-btn {
       position: absolute;
       bottom: 85px;
@@ -223,7 +220,7 @@
         <label class="remember-me">
           <input type="checkbox" id="rememberMe"> Beni hatırla
         </label>
-        <a class="forgot-pass" onclick="forgotPassword()">Şifremi unuttum?</a>
+        <a class="forgot-pass">Şifremi unuttum?</a>
       </div>
 
       <button class="btn-login" id="authBtn" onclick="handleAuth()">GİRİŞ</button>
@@ -272,9 +269,7 @@
 
     <div class="chat-list">
       <div class="section-title">Arkadaşlarım</div>
-      <div id="friendsListContainer">
-        <!-- Eklenen arkadaşlar buraya eklenecek -->
-      </div>
+      <div id="friendsListContainer"></div>
     </div>
   </div>
 
@@ -289,13 +284,11 @@
       </button>
     </div>
 
-    <!-- Sohbet Seçilmediğinde Gösterilecek Ekran -->
     <div id="noChatScreen" class="no-chat-selected">
       <i class="fa-regular fa-comments" style="font-size: 4rem; opacity: 0.5;"></i>
       <p>Mesajlaşmak veya kod paylaşmak için sol menüden bir arkadaşınızı seçin.</p>
     </div>
 
-    <!-- Sohbet Alanı -->
     <div class="messages-container hidden" id="messagesContainer"></div>
 
     <div class="chat-input-area hidden" id="chatInputArea">
@@ -303,23 +296,23 @@
       <button class="btn-send" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i> GÖNDER</button>
     </div>
 
-    <!-- Robot / Gemini AI Yuvarlak Buton -->
-    <div class="ai-fab-btn" onclick="toggleAiCard()" title="Gemini Yapay Zekaya Soru Sor">
+    <!-- Robot / AI Yuvarlak Buton -->
+    <div class="ai-fab-btn" onclick="toggleAiCard()" title="Yapay Zekaya Soru Sor">
       🤖
     </div>
 
-    <!-- Gemini AI Sohbet Kartı -->
+    <!-- Yapay Zeka Sohbet Kartı -->
     <div class="ai-chat-card hidden" id="aiChatCard">
       <div class="ai-card-header">
-        <span>✨ Gemini AI Asistan</span>
+        <span>🤖 AI Kod & Ders Asistanı</span>
         <i class="fa-solid fa-xmark" onclick="toggleAiCard()" style="cursor: pointer;"></i>
       </div>
       <div class="ai-messages" id="aiMessages">
-        <div class="ai-msg bot">Merhaba! Ben Gemini tabanlı kod ve ödev asistanın. Bana istediğin soruyu sorabilirsin! 🤖</div>
+        <div class="ai-msg bot">Merhaba! Ben ücretsiz yapay zeka asistanın. Kodlama veya derslerinle ilgili her şeyi doğrudan sorabilirsin! 🤖</div>
       </div>
       <div class="ai-input-box">
-        <input type="text" id="aiPromptInput" placeholder="Gemini'ye sorun..." onkeypress="if(event.key==='Enter') askGemini()">
-        <button onclick="askGemini()"><i class="fa-solid fa-paper-plane"></i></button>
+        <input type="text" id="aiPromptInput" placeholder="Soru sor..." onkeypress="if(event.key==='Enter') askAI()">
+        <button onclick="askAI()"><i class="fa-solid fa-paper-plane"></i></button>
       </div>
     </div>
   </div>
@@ -557,19 +550,19 @@
         });
     }
 
-    /* Gemini AI İşlevleri */
+    /* Ücretsiz ve Doğrulamasız Yapay Zeka Servisi (Pollinations API) */
     function toggleAiCard() {
       document.getElementById("aiChatCard").classList.toggle("hidden");
     }
 
-    async function askGemini() {
+    async function askAI() {
       const input = document.getElementById("aiPromptInput");
       const prompt = input.value.trim();
       if (!prompt) return;
 
       const container = document.getElementById("aiMessages");
 
-      // Kullanıcı mesajını ekle
+      // Kullanıcı Mesajı
       const userMsg = document.createElement("div");
       userMsg.className = "ai-msg user";
       userMsg.innerText = prompt;
@@ -577,7 +570,7 @@
 
       input.value = "";
 
-      // Bot yükleniyor mesajı ekle
+      // Yükleniyor Mesajı
       const botMsg = document.createElement("div");
       botMsg.className = "ai-msg bot";
       botMsg.innerText = "Düşünüyor... 🤖";
@@ -585,11 +578,11 @@
       container.scrollTop = container.scrollHeight;
 
       try {
-        // Puter.js üzerinden Gemini AI modelini çağır
-        const response = await puter.ai.chat(prompt, { model: 'gemini-1.5-flash' });
-        botMsg.innerText = response;
+        const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
+        const textResponse = await response.text();
+        botMsg.innerText = textResponse;
       } catch (err) {
-        botMsg.innerText = "Bir hata oluştu veya bağlantı kurulamadı.";
+        botMsg.innerText = "Bir bağlantı hatası oluştu. Lütfen tekrar deneyin.";
       }
 
       container.scrollTop = container.scrollHeight;
