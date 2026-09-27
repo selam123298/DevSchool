@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DevSchool - Kod & Mesajlaşma Platformu</title>
+  <title>DevSchool - Giriş Yap & Mesajlaş</title>
   
   <!-- FontAwesome & Prism CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -20,23 +20,19 @@
       --bg-tertiary: #21262d;
       --text-main: #c9d1d9;
       --text-muted: #8b949e;
-      --accent-color: #58a6ff;
-      --accent-hover: #1f6feb;
+      --accent-color: #0072ff;
+      --accent-hover: #005bb5;
       --border-color: #30363d;
-      --code-bg: #0d1117;
       --card-bg: #161b22;
     }
 
     [data-theme="light"] {
       --bg-primary: #ffffff;
       --bg-secondary: #f6f8fa;
-      --bg-tertiary: #eaeea1;
+      --bg-tertiary: #e1e4e8;
       --text-main: #24292f;
       --text-muted: #57606a;
-      --accent-color: #0969da;
-      --accent-hover: #0c2d6b;
       --border-color: #d0d7de;
-      --code-bg: #24292e;
       --card-bg: #ffffff;
     }
 
@@ -49,31 +45,141 @@
       --accent-color: #ff007f;
       --accent-hover: #b30059;
       --border-color: #00ffcc;
-      --code-bg: #050505;
       --card-bg: #120024;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: var(--bg-primary); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; transition: all 0.3s ease; }
 
-    /* Auth Screen */
-    .auth-overlay { position: fixed; inset: 0; background: var(--bg-primary); z-index: 1000; display: flex; align-items: center; justify-content: center; }
-    .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 2.5rem; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); text-align: center; }
-    .auth-card h2 { margin-bottom: 1.5rem; color: var(--accent-color); font-size: 1.8rem; }
-    .input-group { margin-bottom: 1rem; text-align: left; }
-    .input-group label { display: block; margin-bottom: 0.4rem; font-size: 0.85rem; color: var(--text-muted); }
-    .input-group input { width: 100%; padding: 0.75rem; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; outline: none; }
-    .btn { width: 100%; padding: 0.75rem; background: var(--accent-color); color: #fff; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 0.5rem; }
-    .btn:hover { background: var(--accent-hover); }
+    /* Login Screen - Image Inspired Style */
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      background: #021B38;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-    /* Main App Layout */
+    .auth-card {
+      background: linear-gradient(180deg, #1A549F 0%, #082854 100%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 3rem 2.5rem;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      text-align: center;
+      color: #ffffff;
+    }
+
+    .auth-card h2 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .auth-card p.subtitle {
+      font-size: 0.85rem;
+      color: #d1e2ff;
+      margin-bottom: 2rem;
+      line-height: 1.4;
+    }
+
+    .form-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.2rem;
+    }
+
+    .form-group label {
+      width: 110px;
+      text-align: right;
+      padding-right: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .form-group input {
+      flex: 1;
+      padding: 0.65rem 0.8rem;
+      background: #ffffff;
+      border: none;
+      border-radius: 4px;
+      color: #333333;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .options-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 1.2rem 0 1.8rem 110px;
+      font-size: 0.8rem;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #ffffff;
+      cursor: pointer;
+    }
+
+    .forgot-pass {
+      color: #ffffff;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .forgot-pass:hover {
+      color: #90caf9;
+    }
+
+    .btn-login {
+      width: 130px;
+      padding: 0.7rem;
+      background: linear-gradient(180deg, #4A90E2 0%, #0056B3 100%);
+      color: #ffffff;
+      border: 1px solid #7cb5ec;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: all 0.2s;
+    }
+
+    .btn-login:hover {
+      background: linear-gradient(180deg, #5CA0F2 0%, #0066D3 100%);
+      transform: translateY(-1px);
+    }
+
+    .toggle-auth {
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: #d1e2ff;
+    }
+
+    .toggle-auth span {
+      color: #ffffff;
+      font-weight: bold;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+
+    /* Main App Interface */
     .sidebar { width: 300px; background: var(--bg-secondary); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; }
     .sidebar-header { padding: 1rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
     .user-profile { display: flex; align-items: center; gap: 0.75rem; }
-    .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent-color); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; background: #0072ff; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; }
     .chat-list { flex: 1; overflow-y: auto; padding: 0.5rem; }
-    .chat-item { padding: 0.75rem; border-radius: 6px; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; transition: background 0.2s; margin-bottom: 0.2rem; }
-    .chat-item:hover, .chat-item.active { background: var(--bg-tertiary); }
+    .chat-item { padding: 0.75rem; border-radius: 6px; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; background: var(--bg-tertiary); }
 
     .main-chat { flex: 1; display: flex; flex-direction: column; background: var(--bg-primary); }
     .chat-header { padding: 1rem; border-bottom: 1px solid var(--border-color); background: var(--bg-secondary); display: flex; align-items: center; justify-content: space-between; }
@@ -84,10 +190,11 @@
     .message.received { align-self: flex-start; }
     .message-header { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.2rem; display: flex; gap: 0.5rem; }
     .message-bubble { padding: 0.75rem 1rem; border-radius: 8px; background: var(--bg-tertiary); border: 1px solid var(--border-color); word-break: break-word; }
-    .message.sent .message-bubble { background: var(--accent-color); color: #fff; border: none; }
+    .message.sent .message-bubble { background: #0072ff; color: #fff; border: none; }
     
     .chat-input-area { padding: 1rem; background: var(--bg-secondary); border-top: 1px solid var(--border-color); display: flex; gap: 0.5rem; align-items: center; }
     .chat-input-area input { flex: 1; padding: 0.75rem; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; outline: none; }
+    .btn-send { padding: 0.75rem 1.5rem; background: #0072ff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
 
     pre { margin-top: 0.5rem!important; border-radius: 6px!important; }
     .hidden { display: none!important; }
@@ -96,72 +203,88 @@
 </head>
 <body>
 
-  <!-- Auth Overlay -->
+  <!-- Login/Register Overlay -->
   <div id="authScreen" class="auth-overlay">
     <div class="auth-card">
-      <h2><i class="fa-solid fa-code"></i> DevSchool</h2>
-      <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Giriş Yap veya Hesap Oluştur</p>
-      <div class="input-group">
-        <label>Kullanıcı Adı</label>
-        <input type="text" id="usernameInput" placeholder="Örn: Yigit">
+      <h2 id="formTitle">Giriş yap</h2>
+      <p class="subtitle" id="formSubtitle">Size özel alana girmek ve paylaşım yapmaya başlamak için giriş yapın</p>
+      
+      <div class="form-group">
+        <label for="usernameInput">Kullanıcı Adı:</label>
+        <input type="text" id="usernameInput" placeholder="">
       </div>
-      <button class="btn" onclick="login()">Sisteme Giriş Yap</button>
+
+      <div class="form-group">
+        <label for="passwordInput">Şifreniz:</label>
+        <input type="password" id="passwordInput" placeholder="">
+      </div>
+
+      <div class="options-row" id="optionsRow">
+        <label class="remember-me">
+          <input type="checkbox" id="rememberMe"> Beni hatırla
+        </label>
+        <a class="forgot-pass" onclick="forgotPassword()">Şifremi unuttum?</a>
+      </div>
+
+      <button class="btn-login" id="authBtn" onclick="handleAuth()">GİRİŞ</button>
+
+      <div class="toggle-auth">
+        <span id="toggleText">Hesabınız yok mu? Kayıt Olun</span>
+      </div>
     </div>
   </div>
 
-  <!-- Sidebar -->
+  <!-- Main Chat Application -->
   <div class="sidebar">
     <div class="sidebar-header">
       <div class="user-profile">
         <div class="avatar" id="myAvatar">?</div>
         <div>
           <div style="font-weight: 600;" id="myUsername">Kullanıcı</div>
-          <div style="font-size: 0.75rem; color: var(--text-muted);">Çevrimiçi</div>
+          <div style="font-size: 0.75rem; color: #00ff66;">● Çevrimiçi</div>
         </div>
       </div>
       <select class="theme-select" onchange="changeTheme(this.value)">
-        <option value="dark">Dark</option>
-        <option value="light">Light</option>
-        <option value="cyberpunk">Cyberpunk</option>
+        <option value="dark">Koyu</option>
+        <option value="light">Açık</option>
+        <option value="cyberpunk">Siber</option>
       </select>
     </div>
     <div class="chat-list">
-      <div class="chat-item active">
-        <i class="fa-solid fa-hashtag" style="color: var(--accent-color);"></i>
+      <div class="chat-item">
+        <i class="fa-solid fa-hashtag" style="color: #0072ff;"></i>
         <div>
-          <div style="font-weight: 600;"># Genel Sohbet</div>
-          <div style="font-size: 0.75rem; color: var(--text-muted);">Okul Odası</div>
+          <div style="font-weight: 600;"># Okul Mesajlaşma</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">Ortak Kod Alanı</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Main Chat -->
   <div class="main-chat">
     <div class="chat-header">
       <div style="display: flex; align-items: center; gap: 0.5rem;">
         <i class="fa-solid fa-hashtag"></i>
-        <span style="font-weight: 600;">Genel Sohbet & Kod Paylaşımı</span>
+        <span style="font-weight: 600;">Okul Sohbet Odası</span>
       </div>
+      <button onclick="logout()" style="background: transparent; color: var(--text-muted); border: none; cursor: pointer;"><i class="fa-solid fa-right-from-bracket"></i> Çıkış Yap</button>
     </div>
 
     <div class="messages-container" id="messagesContainer">
-      <!-- Mesajlar buraya veritabanından yüklenecek -->
+      <!-- Veritabanından gelen mesajlar -->
     </div>
 
     <div class="chat-input-area">
       <input type="text" id="messageInput" placeholder="Mesaj yazın veya kod yapıştırın..." onkeypress="handleKeyPress(event)">
-      <button class="btn" style="width: auto; padding: 0.75rem 1.5rem;" onclick="sendMessage()">
-        <i class="fa-solid fa-paper-plane"></i>
-      </button>
+      <button class="btn-send" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i> GÖNDER</button>
     </div>
   </div>
 
-  <!-- Prism JS -->
+  <!-- Prism JS for Code Highlighting -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 
   <script>
-    // Firebase Config
+    // Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCGSljEvthgH6QYasetqpS9xsuNfV_RIzI",
       authDomain: "devschool-558db.firebaseapp.com",
@@ -174,18 +297,88 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    let isLoginMode = true;
     let currentUser = "";
 
-    function login() {
+    // Toggle between Login & Register mode
+    document.getElementById("toggleText").addEventListener("click", () => {
+      isLoginMode = !isLoginMode;
+      const title = document.getElementById("formTitle");
+      const subtitle = document.getElementById("formSubtitle");
+      const btn = document.getElementById("authBtn");
+      const toggle = document.getElementById("toggleText");
+      const options = document.getElementById("optionsRow");
+
+      if (isLoginMode) {
+        title.innerText = "Giriş yap";
+        subtitle.innerText = "Size özel alana girmek ve paylaşım yapmaya başlamak için giriş yapın";
+        btn.innerText = "GİRİŞ";
+        toggle.innerText = "Hesabınız yok mu? Kayıt Olun";
+        options.style.display = "flex";
+      } else {
+        title.innerText = "Kayıt Ol";
+        subtitle.innerText = "Yeni bir hesap oluşturup arkadaşlarınızla mesajlaşmaya başlayın";
+        btn.innerText = "KAYIT OL";
+        toggle.innerText = "Zaten hesabınız var mı? Giriş Yapın";
+        options.style.display = "none";
+      }
+    });
+
+    async function handleAuth() {
       const username = document.getElementById("usernameInput").value.trim();
-      if (!username) return alert("Lütfen bir kullanıcı adı girin!");
-      
+      const password = document.getElementById("passwordInput").value.trim();
+
+      if (!username || !password) {
+        alert("Lütfen kullanıcı adı ve şifrenizi girin!");
+        return;
+      }
+
+      const userRef = db.collection("users").doc(username.toLowerCase());
+
+      if (isLoginMode) {
+        // Giriş Yap
+        const doc = await userRef.get();
+        if (!doc.exists) {
+          alert("Böyle bir kullanıcı adı bulunamadı! Lütfen kayıt olun.");
+          return;
+        }
+        if (doc.data().password !== password) {
+          alert("Hatalı şifre girdiniz!");
+          return;
+        }
+        startApp(username);
+      } else {
+        // Kayıt Ol
+        const doc = await userRef.get();
+        if (doc.exists) {
+          alert("Bu kullanıcı adı zaten alınmış! Başka bir isim deneyin.");
+          return;
+        }
+        await userRef.set({
+          username: username,
+          password: password,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        alert("Başarıyla kayıt olundu! Giriş yapılıyor...");
+        startApp(username);
+      }
+    }
+
+    function forgotPassword() {
+      alert("Şifrenizi unuttuysanız lütfen sistem yöneticisi/arkadaşınız ile iletişime geçin.");
+    }
+
+    function startApp(username) {
       currentUser = username;
       document.getElementById("myUsername").innerText = currentUser;
       document.getElementById("myAvatar").innerText = currentUser[0].toUpperCase();
       document.getElementById("authScreen").classList.add("hidden");
 
       listenForMessages();
+    }
+
+    function logout() {
+      location.reload();
     }
 
     function changeTheme(theme) {
